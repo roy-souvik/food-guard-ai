@@ -1,0 +1,15 @@
+langgraph>=0.2.0
+langchain-core>=0.2.0
+langchain-openai>=0.0.8
+sqlmodel>=0.0.18
+gradio>=4.0.0
+qrcode[pil]>=7.4
+pillow>=10.0
+python-dotenv>=1.0
+scikit-learn>=1.4
+xgboost>=2.0
+pandas>=2.0
+numpy>=1.26
+opencv-python>=4.8.0
+ultralytics>=8.0.0
+torch>=2.0

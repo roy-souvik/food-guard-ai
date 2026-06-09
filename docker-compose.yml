@@ -1,0 +1,40 @@
+version: '3.9'
+
+services:
+  # FoodGuard AI Gradio Application
+  foodguard-app:
+    container_name: foodguard-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "7860:7860"
+    environment:
+      - FOODGUARD_DB_PATH=/data/foodguard.db
+      - PYTHONUNBUFFERED=1
+    volumes:
+      # Persist database across container restarts
+      - foodguard_data:/data
+      # Mount certificates for inspection
+      - ./certificates:/app/certificates
+      # Mount synthetic data
+      - ./data:/app/data:ro
+    networks:
+      - foodguard-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7860"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+# Volumes
+volumes:
+  foodguard_data:
+    driver: local
+
+# Networks
+networks:
+  foodguard-network:
+    driver: bridge

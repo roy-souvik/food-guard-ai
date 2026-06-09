@@ -1,0 +1,13 @@
+.git
+.gitignore
+__pycache__
+*.pyc
+*.pyo
+*.egg-info
+.env
+.venv
+venv
+.DS_Store
+*.db
+certificates/*
+!certificates/.gitkeep
