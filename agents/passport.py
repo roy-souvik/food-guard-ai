@@ -1,4 +1,4 @@
-# Phase 6: Passport Agent
+# Passport Agent
 # Role: Certificate generation, hash, QR code, blockchain stub
 
 import json

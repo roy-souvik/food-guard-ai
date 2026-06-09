@@ -1,4 +1,4 @@
-# Phase 4: Supervisor Agent
+# Supervisor Agent
 # Role: Entry point, ID generation, state initialization
 
 from agents.state import FoodInvestigationState

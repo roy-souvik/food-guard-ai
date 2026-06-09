@@ -1,4 +1,4 @@
-# Phase 4: Vision Agent
+# Vision Agent
 # Role: YOLOv12 image analysis for milk adulteration detection
 
 from agents.state import FoodInvestigationState

@@ -1,4 +1,4 @@
-# Phase 5: Reviewer Agent
+# Reviewer Agent
 # Role: Confidence adjustment and edge-case escalation
 
 from agents.state import FoodInvestigationState

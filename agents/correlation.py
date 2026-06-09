@@ -1,4 +1,4 @@
-# Phase 5: Correlation Agent (Rule-Based)
+# Correlation Agent (Rule-Based)
 # Role: Cross-modal evidence fusion via rule matching
 
 import json

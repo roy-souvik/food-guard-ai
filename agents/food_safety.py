@@ -1,4 +1,4 @@
-# Phase 5: Food Safety Agent
+# Food Safety Agent
 # Role: LLM-based verdict generation with risk assessment
 
 import json

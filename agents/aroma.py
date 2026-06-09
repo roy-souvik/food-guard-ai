@@ -1,4 +1,4 @@
-# Phase 4: Aroma Agent
+# Aroma Agent
 # Role: E-Nose sensor analysis via XGBoost for volatile compound detection
 
 from agents.state import FoodInvestigationState

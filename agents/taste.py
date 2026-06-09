@@ -1,4 +1,4 @@
-# Phase 4: Taste Agent
+# Taste Agent
 # Role: E-Tongue sensor analysis via XGBoost for taste profile detection
 
 from agents.state import FoodInvestigationState
