@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   # FoodGuard AI Gradio Application
   foodguard-app:
@@ -17,8 +15,8 @@ services:
       - foodguard_data:/data
       # Mount certificates for inspection
       - ./certificates:/app/certificates
-      # Mount synthetic data
-      - ./data:/app/data:ro
+      # Mount synthetic data (writeable for generated datasets)
+      - ./data:/app/data
     networks:
       - foodguard-network
     restart: unless-stopped
