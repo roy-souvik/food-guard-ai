@@ -496,6 +496,135 @@ def generate_report_markdown(
 
 # ============= Utility Helpers =============
 
+def generate_vision_images(n_samples_per_class=60, output_dir="../data/synthetic/vision"):
+    """
+    Generate procedural deposit pattern images for each adulterant.
+    Returns list of (image_path, deposit_type, adulterant) tuples.
+    """
+    Path(output_dir).mkdir(parents=True, exist_ok=True)
+
+    results = []
+
+    # Image parameters
+    SIZE = 256
+    CENTER = (SIZE // 2, SIZE // 2)
+    MAX_RADIUS = SIZE // 2 - 10
+
+    def generate_fresh(img):
+        """Clean radial ring pattern."""
+        draw = ImageDraw.Draw(img)
+        # Draw clean ring
+        ring_inner = MAX_RADIUS - 30
+        ring_outer = MAX_RADIUS
+        for r in np.linspace(ring_inner, ring_outer, 5):
+            draw.ellipse(
+                [CENTER[0]-r, CENTER[1]-r, CENTER[0]+r, CENTER[1]+r],
+                outline=(100, 100, 100),
+                width=2
+            )
+
+    def generate_water(img):
+        """Weak/sparse ring pattern."""
+        draw = ImageDraw.Draw(img)
+        # Very faint ring
+        r = MAX_RADIUS - 40
+        draw.ellipse(
+            [CENTER[0]-r, CENTER[1]-r, CENTER[0]+r, CENTER[1]+r],
+            outline=(50, 50, 50),
+            width=1
+        )
+
+    def generate_urea(img):
+        """Fine dispersed crystals."""
+        pixels = img.load()
+        # Scatter fine crystals
+        for _ in range(200):
+            x = random.randint(50, SIZE-50)
+            y = random.randint(50, SIZE-50)
+            dist_from_center = ((x-CENTER[0])**2 + (y-CENTER[1])**2)**0.5
+            if dist_from_center < MAX_RADIUS:
+                # Small crystals
+                for dx in range(-2, 3):
+                    for dy in range(-2, 3):
+                        if 0 <= x+dx < SIZE and 0 <= y+dy < SIZE:
+                            pixels[x+dx, y+dy] = (80, 80, 80)
+
+    def generate_detergent(img):
+        """Needle crystals at edges."""
+        draw = ImageDraw.Draw(img)
+        # Radial lines from center (needle-like)
+        for angle in np.linspace(0, 2*np.pi, 12):
+            x_end = CENTER[0] + MAX_RADIUS * np.cos(angle)
+            y_end = CENTER[1] + MAX_RADIUS * np.sin(angle)
+            draw.line([CENTER, (x_end, y_end)], fill=(100, 100, 100), width=2)
+
+    def generate_formalin(img):
+        """Dense dark center blob."""
+        draw = ImageDraw.Draw(img)
+        # Dark blob at center
+        blob_size = MAX_RADIUS // 3
+        draw.ellipse(
+            [CENTER[0]-blob_size, CENTER[1]-blob_size, CENTER[0]+blob_size, CENTER[1]+blob_size],
+            fill=(30, 30, 30)
+        )
+
+    def generate_h2o2(img):
+        """Floating center blob."""
+        draw = ImageDraw.Draw(img)
+        offset = 10
+        blob_size = MAX_RADIUS // 4
+        draw.ellipse(
+            [CENTER[0]-blob_size+offset, CENTER[1]-blob_size+offset,
+             CENTER[0]+blob_size+offset, CENTER[1]+blob_size+offset],
+            fill=(60, 60, 60)
+        )
+
+    def generate_spoiled(img):
+        """Dark irregular deposit."""
+        draw = ImageDraw.Draw(img)
+        # Irregular dark blob
+        for _ in range(3):
+            x_offset = random.randint(-20, 20)
+            y_offset = random.randint(-20, 20)
+            blob_size = random.randint(20, 40)
+            draw.ellipse(
+                [CENTER[0]-blob_size+x_offset, CENTER[1]-blob_size+y_offset,
+                 CENTER[0]+blob_size+x_offset, CENTER[1]+blob_size+y_offset],
+                fill=(50, 50, 50)
+            )
+
+    generators = {
+        "Fresh": (generate_fresh, "clean_ring"),
+        "Water": (generate_water, "weak_ring"),
+        "Urea": (generate_urea, "fine_crystals"),
+        "Detergent": (generate_detergent, "needle_crystals"),
+        "Formalin": (generate_formalin, "dense_dark_deposit"),
+        "H2O2": (generate_h2o2, "center_blob"),
+        "Spoiled": (generate_spoiled, "dark_deposit")
+    }
+
+    # Generate images
+    for adulterant in ADULTERANTS:
+        adulterant_dir = Path(output_dir) / adulterant
+        adulterant_dir.mkdir(parents=True, exist_ok=True)
+
+        generator, deposit_type = generators[adulterant]
+
+        for i in range(n_samples_per_class):
+            # Create white background image
+            img = Image.new('RGB', (SIZE, SIZE), color=(255, 255, 255))
+
+            # Generate pattern
+            generator(img)
+
+            # Save image
+            img_path = adulterant_dir / f"{adulterant.lower()}_{i:04d}.png"
+            img.save(img_path)
+
+            results.append((str(img_path), deposit_type, adulterant))
+
+    return results
+
 def ensure_directories():
     """Create necessary directories if they don't exist."""
     Path("data/synthetic/vision").mkdir(parents=True, exist_ok=True)
