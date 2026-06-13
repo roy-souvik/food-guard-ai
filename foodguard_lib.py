@@ -12,6 +12,8 @@ import requests
 import hashlib
 import qrcode
 import io
+import os
+import yaml
 from contextlib import contextmanager
 from pathlib import Path
 
@@ -28,6 +30,12 @@ ADULTERANTS = [
     "H2O2",
     "Spoiled"
 ]
+
+VAL_FOLDER = r"/workspace/shared/food-guard-ai/data/milk_evaporative_dataset/images/train"
+MODEL_WEIGHTS = "/workspace/shared/food-guard-ai/notebooks/runs/detect/milk_detection_framework/yolo12_classes_run-3/weights/best.pt"
+INPUT_VAL_FOLDER = "/workspace/shared/food-guard-ai/data/milk_evaporative_dataset/images/val/"
+JSON_OUTPUT_FOLDER = "output/yolo_predictions"
+YALM_CONFIG_PATH = r"/workspace/shared/food-guard-ai/notebooks/dataset.yaml"
 
 # ============= DB Helpers =============
 
@@ -217,11 +225,14 @@ def init_db(db_path: str = DB_PATH):
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP
             )""",
 
-            """CREATE TABLE IF NOT EXISTS vision_analysis (
-                id TEXT PRIMARY KEY,
-                batch_id TEXT NOT NULL,
-                image_path TEXT,
+            """CREATE TABLE vision_nalysis  (
+                data_sample_id VARCHAR(36) PRIMARY KEY,
+                image_filename VARCHAR(255) NOT NULL,
+
+                -- The single string column holding the entire packed JSON payload
                 class_counts_json TEXT NOT NULL,
+
+                -- Summary Metrics
                 total_objects INT NOT NULL DEFAULT 0,
                 unique_classes TEXT NOT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -492,6 +503,75 @@ def ensure_directories():
     Path("reports").mkdir(parents=True, exist_ok=True)
     Path("models").mkdir(parents=True, exist_ok=True)
     Path("notebooks").mkdir(parents=True, exist_ok=True)
+
+def generate_dynamic_yolo_yaml(val_images_dir, save_yaml_path):
+    """
+    Scans an image directory, dynamically extracts distinct classes from
+    filenames (splitting on the last underscore), and writes a YOLO-compliant YAML file.
+    """
+    img_dir = Path(val_images_dir)
+    if not img_dir.exists():
+        print(f"❌ Error: The directory '{val_images_dir}' does not exist.")
+        return None
+
+    # Supported image extensions
+    valid_extensions = {'.jpg', '.jpeg', '.png', '.bmp'}
+
+    # Track unique class names found in the folder
+    discovered_classes = set()
+
+    print(f"📂 Scanning directory: {img_dir}")
+    for file_path in img_dir.iterdir():
+        if file_path.is_file() and file_path.suffix.lower() in valid_extensions:
+            filename = file_path.stem  # e.g., 'detergent_added_0016' or 'authentic_0049'
+
+            # Split from the right side at the last underscore to detach the number
+            if '_' in filename:
+                class_prefix = filename.rsplit('_', 1)[0]  # Extracts 'detergent_added' or 'authentic'
+                discovered_classes.add(class_prefix)
+            else:
+                # Fallback if there is no underscore sequence
+                discovered_classes.add(filename)
+
+    # Sort classes alphabetically to maintain consistent ordering indexes
+    class_list = sorted(list(discovered_classes))
+
+    if not class_list:
+        print("⚠️ Warning: No valid images found. YAML file creation aborted.")
+        return None
+
+    # Create the numeric ID mapping dictionary required by YOLO {0: 'classA', 1: 'classB'}
+    class_mapping = {idx: name for idx, name in enumerate(class_list)}
+
+    # Establish the absolute root directory path (one level above the images/val folder)
+    # Assumes structure: food-guard-ai/data/milk_evaporative_dataset/images/val
+    root_path = img_dir.parents[1].as_posix()
+
+    # Construct the structural configuration content
+    yaml_data = {
+        'path': root_path,
+        'train': 'images/train',
+        'val': 'images/val',
+        'names': class_mapping
+    }
+
+    # Write directly out to a clean YAML format file
+    with open(save_yaml_path, 'w', encoding='utf-8') as yaml_file:
+        yaml.dump(yaml_data, yaml_file, default_flow_style=False, sort_keys=False)
+
+    print("\n" + "="*60)
+    print("🎯 DYNAMIC YAML CONFIGURATION GENERATED SUCCESSFULY!")
+    print("="*60)
+    print(f"📍 Saved Location : {Path(save_yaml_path).absolute()}")
+    print(f"📦 Root Dataset Dir: {root_path}")
+    print(f"🏷️ Discovered Classes ({len(class_mapping)}):")
+    for cid, cname in class_mapping.items():
+        print(f"    👉 Class {cid}: '{cname}'")
+    print("="*60 + "\n")
+
+    return save_yaml_path
+
+
 
 if __name__ == "__main__":
     # Test: initialize DB
