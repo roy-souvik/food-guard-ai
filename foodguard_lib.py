@@ -221,10 +221,10 @@ def init_db(db_path: str = DB_PATH):
                 id TEXT PRIMARY KEY,
                 batch_id TEXT NOT NULL,
                 image_path TEXT,
-                deposit_type TEXT,
-                predicted_class TEXT,
-                confidence REAL,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                class_counts_json TEXT NOT NULL,
+                total_objects INT NOT NULL DEFAULT 0,
+                unique_classes TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )""",
 
             """CREATE TABLE IF NOT EXISTS correlation_rules (
