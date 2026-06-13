@@ -1,7 +1,4 @@
-# FoodGuard AI Requirements
-# For ROCM GPU support, run: bash setup-rocm.sh
-# Or manually: pip install -r requirements.txt --index-url https://download.pytorch.org/whl/rocm6.4
-
+# PyPI packages (standard index)
 langgraph>=0.2.0
 langchain-core>=0.2.0
 langchain-openai>=0.0.8
@@ -16,6 +13,8 @@ pandas>=2.0
 numpy>=1.26
 opencv-python-headless>=4.8.0
 ultralytics>=8.0.0
+
+# ROCM PyTorch packages (install with: pip install -r requirements-rocm.txt --index-url https://download.pytorch.org/whl/rocm6.4)
 torch>=2.0
 torchvision>=0.15.0
 torchaudio>=2.0
