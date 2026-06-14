@@ -1,0 +1,106 @@
+{
+  "modality": "etongue",
+  "unit": "RTU 0\u201310",
+  "samples": [
+    {
+      "batch_id": "R001",
+      "sweetness": 5.1,
+      "saltiness": 1.9,
+      "sourness": 0.9,
+      "bitterness": 0.3,
+      "umami": 1.4,
+      "astringency": 0.2,
+      "aftertaste": 4.1
+    },
+    {
+      "batch_id": "R002",
+      "sweetness": 3.2,
+      "saltiness": 0.7,
+      "sourness": 0.3,
+      "bitterness": 0.3,
+      "umami": 0.4,
+      "astringency": 0.1,
+      "aftertaste": 2.4
+    },
+    {
+      "batch_id": "R003",
+      "sweetness": 5.0,
+      "saltiness": 3.9,
+      "sourness": 0.4,
+      "bitterness": 2.1,
+      "umami": 1.4,
+      "astringency": 0.9,
+      "aftertaste": 5.1
+    },
+    {
+      "batch_id": "R004",
+      "sweetness": 4.8,
+      "saltiness": 5.1,
+      "sourness": 0.9,
+      "bitterness": 1.2,
+      "umami": 1.3,
+      "astringency": 1.4,
+      "aftertaste": 5.4
+    },
+    {
+      "batch_id": "R005",
+      "sweetness": 2.9,
+      "saltiness": 3.1,
+      "sourness": 3.7,
+      "bitterness": 4.8,
+      "umami": 0.8,
+      "astringency": 2.5,
+      "aftertaste": 6.5
+    },
+    {
+      "batch_id": "R006",
+      "sweetness": 2.4,
+      "saltiness": 1.8,
+      "sourness": 0.4,
+      "bitterness": 2.0,
+      "umami": 0.5,
+      "astringency": 1.9,
+      "aftertaste": 5.5
+    },
+    {
+      "batch_id": "R007",
+      "sweetness": 1.4,
+      "saltiness": 3.0,
+      "sourness": 6.7,
+      "bitterness": 5.3,
+      "umami": 0.2,
+      "astringency": 4.1,
+      "aftertaste": 7.0
+    },
+    {
+      "batch_id": "R008",
+      "sweetness": 4.9,
+      "saltiness": 4.0,
+      "sourness": 0.5,
+      "bitterness": 1.6,
+      "umami": 1.3,
+      "astringency": 1.1,
+      "aftertaste": 5.3
+    },
+    {
+      "batch_id": "R009",
+      "sweetness": 4.2,
+      "saltiness": 2.3,
+      "sourness": 1.3,
+      "bitterness": 0.6,
+      "umami": 0.7,
+      "astringency": 0.4,
+      "aftertaste": 3.2
+    },
+    {
+      "batch_id": "R010",
+      "sweetness": 1.9,
+      "saltiness": 3.0,
+      "sourness": 5.1,
+      "bitterness": 4.9,
+      "umami": 0.3,
+      "astringency": 3.7,
+      "aftertaste": 6.7
+    }
+  ]
+}

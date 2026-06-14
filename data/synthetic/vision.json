@@ -1,0 +1,106 @@
+{
+  "modality": "vision",
+  "unit": "CNN feature scores (0.0\u20131.0)",
+  "samples": [
+    {
+      "batch_id": "R001",
+      "globule_density": 0.91,
+      "globule_roundness": 0.95,
+      "cluster_factor": 0.09,
+      "crystal_presence": 0.01,
+      "blob_irregularity": 0.04,
+      "plate_presence": 0.01,
+      "bacterial_markers": 0.01
+    },
+    {
+      "batch_id": "R002",
+      "globule_density": 0.33,
+      "globule_roundness": 0.87,
+      "cluster_factor": 0.07,
+      "crystal_presence": 0.02,
+      "blob_irregularity": 0.05,
+      "plate_presence": 0.01,
+      "bacterial_markers": 0.01
+    },
+    {
+      "batch_id": "R003",
+      "globule_density": 0.71,
+      "globule_roundness": 0.57,
+      "cluster_factor": 0.87,
+      "crystal_presence": 0.11,
+      "blob_irregularity": 0.11,
+      "plate_presence": 0.02,
+      "bacterial_markers": 0.01
+    },
+    {
+      "batch_id": "R004",
+      "globule_density": 0.49,
+      "globule_roundness": 0.39,
+      "cluster_factor": 0.91,
+      "crystal_presence": 0.95,
+      "blob_irregularity": 0.21,
+      "plate_presence": 0.03,
+      "bacterial_markers": 0.01
+    },
+    {
+      "batch_id": "R005",
+      "globule_density": 0.39,
+      "globule_roundness": 0.19,
+      "cluster_factor": 0.21,
+      "crystal_presence": 0.02,
+      "blob_irregularity": 0.94,
+      "plate_presence": 0.04,
+      "bacterial_markers": 0.02
+    },
+    {
+      "batch_id": "R006",
+      "globule_density": 0.11,
+      "globule_roundness": 0.1,
+      "cluster_factor": 0.31,
+      "crystal_presence": 0.21,
+      "blob_irregularity": 0.19,
+      "plate_presence": 0.95,
+      "bacterial_markers": 0.02
+    },
+    {
+      "batch_id": "R007",
+      "globule_density": 0.15,
+      "globule_roundness": 0.14,
+      "cluster_factor": 0.51,
+      "crystal_presence": 0.1,
+      "blob_irregularity": 0.51,
+      "plate_presence": 0.21,
+      "bacterial_markers": 0.94
+    },
+    {
+      "batch_id": "R008",
+      "globule_density": 0.55,
+      "globule_roundness": 0.6,
+      "cluster_factor": 0.75,
+      "crystal_presence": 0.08,
+      "blob_irregularity": 0.12,
+      "plate_presence": 0.02,
+      "bacterial_markers": 0.02
+    },
+    {
+      "batch_id": "R009",
+      "globule_density": 0.82,
+      "globule_roundness": 0.9,
+      "cluster_factor": 0.17,
+      "crystal_presence": 0.03,
+      "blob_irregularity": 0.09,
+      "plate_presence": 0.02,
+      "bacterial_markers": 0.02
+    },
+    {
+      "batch_id": "R010",
+      "globule_density": 0.2,
+      "globule_roundness": 0.18,
+      "cluster_factor": 0.44,
+      "crystal_presence": 0.09,
+      "blob_irregularity": 0.47,
+      "plate_presence": 0.19,
+      "bacterial_markers": 0.8
+    }
+  ]
+}

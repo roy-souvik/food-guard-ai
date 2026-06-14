@@ -1,0 +1,721 @@
+{
+  "document_type": "Certified Reference Materials",
+  "issuing_body": "NABL Accredited Dairy Lab, India",
+  "version": "1.0",
+  "crms": [
+    {
+      "crm_id": "CRM-AUTH-001",
+      "certified_class": "authentic",
+      "adulterant": "none",
+      "concentration": "0%",
+      "certifying_body": "NABL Accredited Dairy Lab, India",
+      "reference_methods": [
+        "Cryoscopy",
+        "Gerber fat test",
+        "Kjeldahl protein",
+        "Lactometer SNF"
+      ],
+      "certificate_ref": "NABL/DAIRY/2024/001",
+      "certified_ranges": {
+        "vision": {
+          "globule_density": [
+            0.8,
+            1.0
+          ],
+          "globule_roundness": [
+            0.9,
+            1.0
+          ],
+          "cluster_factor": [
+            0.0,
+            0.2
+          ],
+          "crystal_presence": [
+            0.0,
+            0.05
+          ],
+          "blob_irregularity": [
+            0.0,
+            0.1
+          ],
+          "plate_presence": [
+            0.0,
+            0.05
+          ],
+          "bacterial_markers": [
+            0.0,
+            0.05
+          ]
+        },
+        "enose": {
+          "ammonia_signal": [
+            0.1,
+            0.5
+          ],
+          "alcohol_signal": [
+            0.2,
+            1.0
+          ],
+          "sulfur_signal": [
+            0.05,
+            0.3
+          ],
+          "voc_signal": [
+            0.5,
+            2.0
+          ],
+          "hydrocarbon_signal": [
+            0.1,
+            0.8
+          ],
+          "aromatic_signal": [
+            0.1,
+            0.6
+          ]
+        },
+        "etongue": {
+          "sweetness": [
+            4.0,
+            6.0
+          ],
+          "saltiness": [
+            1.0,
+            2.5
+          ],
+          "sourness": [
+            0.5,
+            1.5
+          ],
+          "bitterness": [
+            0.0,
+            0.8
+          ],
+          "umami": [
+            0.5,
+            2.0
+          ],
+          "astringency": [
+            0.0,
+            0.5
+          ],
+          "aftertaste": [
+            3.0,
+            5.0
+          ]
+        }
+      }
+    },
+    {
+      "crm_id": "CRM-WATR-001",
+      "certified_class": "water_diluted",
+      "adulterant": "potable water",
+      "concentration": "20% v/v",
+      "certifying_body": "NABL Accredited Dairy Lab, India",
+      "reference_methods": [
+        "Cryoscopy (freezing point -0.498\u00b0C)",
+        "Lactometer density 1.021 g/mL",
+        "SNF 6.8%"
+      ],
+      "certificate_ref": "NABL/DAIRY/2024/002",
+      "certified_ranges": {
+        "vision": {
+          "globule_density": [
+            0.2,
+            0.5
+          ],
+          "globule_roundness": [
+            0.8,
+            0.95
+          ],
+          "cluster_factor": [
+            0.0,
+            0.15
+          ],
+          "crystal_presence": [
+            0.0,
+            0.05
+          ],
+          "blob_irregularity": [
+            0.0,
+            0.08
+          ],
+          "plate_presence": [
+            0.0,
+            0.03
+          ],
+          "bacterial_markers": [
+            0.0,
+            0.03
+          ]
+        },
+        "enose": {
+          "ammonia_signal": [
+            0.05,
+            0.2
+          ],
+          "alcohol_signal": [
+            0.05,
+            0.3
+          ],
+          "sulfur_signal": [
+            0.02,
+            0.1
+          ],
+          "voc_signal": [
+            0.2,
+            0.8
+          ],
+          "hydrocarbon_signal": [
+            0.05,
+            0.25
+          ],
+          "aromatic_signal": [
+            0.05,
+            0.2
+          ]
+        },
+        "etongue": {
+          "sweetness": [
+            2.5,
+            4.0
+          ],
+          "saltiness": [
+            0.3,
+            1.0
+          ],
+          "sourness": [
+            0.1,
+            0.5
+          ],
+          "bitterness": [
+            0.0,
+            0.5
+          ],
+          "umami": [
+            0.2,
+            0.8
+          ],
+          "astringency": [
+            0.0,
+            0.2
+          ],
+          "aftertaste": [
+            1.5,
+            3.0
+          ]
+        }
+      }
+    },
+    {
+      "crm_id": "CRM-UREA-001",
+      "certified_class": "urea_added",
+      "adulterant": "urea (carbamide)",
+      "concentration": "0.5% w/v",
+      "certifying_body": "NABL Accredited Dairy Lab, India",
+      "reference_methods": [
+        "Urease colorimetric strip (positive)",
+        "DMAB test (yellow coloration)",
+        "Ion chromatography NH4+ elevated",
+        "Conductivity 7.8 mS/cm"
+      ],
+      "certificate_ref": "NABL/DAIRY/2024/003",
+      "certified_ranges": {
+        "vision": {
+          "globule_density": [
+            0.6,
+            0.85
+          ],
+          "globule_roundness": [
+            0.45,
+            0.7
+          ],
+          "cluster_factor": [
+            0.7,
+            0.95
+          ],
+          "crystal_presence": [
+            0.05,
+            0.2
+          ],
+          "blob_irregularity": [
+            0.05,
+            0.2
+          ],
+          "plate_presence": [
+            0.0,
+            0.05
+          ],
+          "bacterial_markers": [
+            0.0,
+            0.03
+          ]
+        },
+        "enose": {
+          "ammonia_signal": [
+            1.0,
+            2.5
+          ],
+          "alcohol_signal": [
+            0.2,
+            0.9
+          ],
+          "sulfur_signal": [
+            0.05,
+            0.25
+          ],
+          "voc_signal": [
+            2.0,
+            4.0
+          ],
+          "hydrocarbon_signal": [
+            0.3,
+            0.8
+          ],
+          "aromatic_signal": [
+            0.2,
+            0.6
+          ]
+        },
+        "etongue": {
+          "sweetness": [
+            4.5,
+            6.0
+          ],
+          "saltiness": [
+            2.5,
+            5.0
+          ],
+          "sourness": [
+            0.1,
+            0.5
+          ],
+          "bitterness": [
+            1.5,
+            4.0
+          ],
+          "umami": [
+            1.0,
+            2.0
+          ],
+          "astringency": [
+            0.5,
+            1.5
+          ],
+          "aftertaste": [
+            4.5,
+            6.5
+          ]
+        }
+      }
+    },
+    {
+      "crm_id": "CRM-AMS-001",
+      "certified_class": "ammonium_sulfate",
+      "adulterant": "ammonium sulfate ((NH4)2SO4)",
+      "concentration": "0.3% w/v",
+      "certifying_body": "NABL Accredited Dairy Lab, India",
+      "reference_methods": [
+        "Barium chloride test (white precipitate, sulfate confirmed)",
+        "Ion chromatography SO4\u00b2\u207b elevated",
+        "Conductivity 8.2 mS/cm",
+        "Nessler reagent (NH4+ positive)"
+      ],
+      "certificate_ref": "NABL/DAIRY/2024/004",
+      "certified_ranges": {
+        "vision": {
+          "globule_density": [
+            0.35,
+            0.65
+          ],
+          "globule_roundness": [
+            0.25,
+            0.55
+          ],
+          "cluster_factor": [
+            0.75,
+            0.98
+          ],
+          "crystal_presence": [
+            0.75,
+            1.0
+          ],
+          "blob_irregularity": [
+            0.1,
+            0.3
+          ],
+          "plate_presence": [
+            0.0,
+            0.08
+          ],
+          "bacterial_markers": [
+            0.0,
+            0.03
+          ]
+        },
+        "enose": {
+          "ammonia_signal": [
+            0.5,
+            1.3
+          ],
+          "alcohol_signal": [
+            0.2,
+            0.9
+          ],
+          "sulfur_signal": [
+            0.4,
+            0.9
+          ],
+          "voc_signal": [
+            1.0,
+            2.5
+          ],
+          "hydrocarbon_signal": [
+            0.2,
+            0.7
+          ],
+          "aromatic_signal": [
+            0.15,
+            0.55
+          ]
+        },
+        "etongue": {
+          "sweetness": [
+            4.0,
+            5.5
+          ],
+          "saltiness": [
+            4.0,
+            6.5
+          ],
+          "sourness": [
+            0.5,
+            1.5
+          ],
+          "bitterness": [
+            0.8,
+            2.0
+          ],
+          "umami": [
+            0.8,
+            1.8
+          ],
+          "astringency": [
+            1.0,
+            2.0
+          ],
+          "aftertaste": [
+            4.5,
+            6.5
+          ]
+        }
+      }
+    },
+    {
+      "crm_id": "CRM-SURF-001",
+      "certified_class": "oil_surfactant",
+      "adulterant": "sodium lauryl sulfate (SLS) + vegetable oil",
+      "concentration": "0.5% SLS + 4% oil v/v",
+      "certifying_body": "NABL Accredited Dairy Lab, India",
+      "reference_methods": [
+        "Methylene blue active substances (MBAS) test positive",
+        "HPLC surfactant profile: SLS peak confirmed",
+        "pH 7.4 (alkaline shift)",
+        "Conductivity 9.1 mS/cm"
+      ],
+      "certificate_ref": "NABL/DAIRY/2024/005",
+      "certified_ranges": {
+        "vision": {
+          "globule_density": [
+            0.25,
+            0.55
+          ],
+          "globule_roundness": [
+            0.05,
+            0.3
+          ],
+          "cluster_factor": [
+            0.1,
+            0.35
+          ],
+          "crystal_presence": [
+            0.0,
+            0.05
+          ],
+          "blob_irregularity": [
+            0.8,
+            1.0
+          ],
+          "plate_presence": [
+            0.0,
+            0.08
+          ],
+          "bacterial_markers": [
+            0.0,
+            0.04
+          ]
+        },
+        "enose": {
+          "ammonia_signal": [
+            0.5,
+            1.2
+          ],
+          "alcohol_signal": [
+            1.0,
+            2.2
+          ],
+          "sulfur_signal": [
+            0.1,
+            0.35
+          ],
+          "voc_signal": [
+            2.8,
+            5.0
+          ],
+          "hydrocarbon_signal": [
+            0.7,
+            1.4
+          ],
+          "aromatic_signal": [
+            0.55,
+            1.0
+          ]
+        },
+        "etongue": {
+          "sweetness": [
+            2.0,
+            4.0
+          ],
+          "saltiness": [
+            2.5,
+            4.5
+          ],
+          "sourness": [
+            2.5,
+            5.0
+          ],
+          "bitterness": [
+            3.5,
+            6.0
+          ],
+          "umami": [
+            0.5,
+            1.2
+          ],
+          "astringency": [
+            1.8,
+            3.5
+          ],
+          "aftertaste": [
+            5.5,
+            7.5
+          ]
+        }
+      }
+    },
+    {
+      "crm_id": "CRM-FORM-001",
+      "certified_class": "formalin_added",
+      "adulterant": "formaldehyde solution (formalin 37%)",
+      "concentration": "300 ppm v/v",
+      "certifying_body": "NABL Accredited Dairy Lab, India",
+      "reference_methods": [
+        "Schryver test (pink coloration confirmed)",
+        "Hestrin colorimetric method (HCHO quantified: 285 ppm)",
+        "GC-MS formaldehyde peak confirmed",
+        "Alcohol signal suppressed (fermentation inhibition)"
+      ],
+      "certificate_ref": "NABL/DAIRY/2024/006",
+      "certified_ranges": {
+        "vision": {
+          "globule_density": [
+            0.05,
+            0.2
+          ],
+          "globule_roundness": [
+            0.05,
+            0.18
+          ],
+          "cluster_factor": [
+            0.2,
+            0.45
+          ],
+          "crystal_presence": [
+            0.1,
+            0.3
+          ],
+          "blob_irregularity": [
+            0.1,
+            0.3
+          ],
+          "plate_presence": [
+            0.8,
+            1.0
+          ],
+          "bacterial_markers": [
+            0.0,
+            0.04
+          ]
+        },
+        "enose": {
+          "ammonia_signal": [
+            0.5,
+            1.1
+          ],
+          "alcohol_signal": [
+            0.0,
+            0.18
+          ],
+          "sulfur_signal": [
+            0.05,
+            0.25
+          ],
+          "voc_signal": [
+            2.5,
+            5.0
+          ],
+          "hydrocarbon_signal": [
+            0.25,
+            0.65
+          ],
+          "aromatic_signal": [
+            0.35,
+            0.75
+          ]
+        },
+        "etongue": {
+          "sweetness": [
+            1.5,
+            3.5
+          ],
+          "saltiness": [
+            1.5,
+            2.5
+          ],
+          "sourness": [
+            0.1,
+            0.6
+          ],
+          "bitterness": [
+            1.5,
+            3.5
+          ],
+          "umami": [
+            0.2,
+            0.8
+          ],
+          "astringency": [
+            1.5,
+            2.8
+          ],
+          "aftertaste": [
+            4.5,
+            6.5
+          ]
+        }
+      }
+    },
+    {
+      "crm_id": "CRM-SPOIL-001",
+      "certified_class": "spoiled",
+      "adulterant": "microbial spoilage (natural)",
+      "concentration": "TPC > 10^7 CFU/mL",
+      "certifying_body": "NABL Accredited Dairy Lab, India",
+      "reference_methods": [
+        "Total Plate Count: 4.2\u00d710^7 CFU/mL",
+        "Titratable acidity: 0.38% LA",
+        "pH: 5.8",
+        "Coliforms: 820 CFU/mL",
+        "Yeast & mold: present"
+      ],
+      "certificate_ref": "NABL/DAIRY/2024/007",
+      "certified_ranges": {
+        "vision": {
+          "globule_density": [
+            0.05,
+            0.25
+          ],
+          "globule_roundness": [
+            0.05,
+            0.22
+          ],
+          "cluster_factor": [
+            0.35,
+            0.65
+          ],
+          "crystal_presence": [
+            0.05,
+            0.18
+          ],
+          "blob_irregularity": [
+            0.35,
+            0.65
+          ],
+          "plate_presence": [
+            0.1,
+            0.3
+          ],
+          "bacterial_markers": [
+            0.75,
+            1.0
+          ]
+        },
+        "enose": {
+          "ammonia_signal": [
+            1.5,
+            3.5
+          ],
+          "alcohol_signal": [
+            1.5,
+            3.0
+          ],
+          "sulfur_signal": [
+            0.35,
+            0.8
+          ],
+          "voc_signal": [
+            3.5,
+            6.0
+          ],
+          "hydrocarbon_signal": [
+            0.8,
+            1.6
+          ],
+          "aromatic_signal": [
+            0.65,
+            1.2
+          ]
+        },
+        "etongue": {
+          "sweetness": [
+            0.5,
+            2.5
+          ],
+          "saltiness": [
+            2.5,
+            4.5
+          ],
+          "sourness": [
+            5.0,
+            8.0
+          ],
+          "bitterness": [
+            4.0,
+            7.0
+          ],
+          "umami": [
+            0.0,
+            0.5
+          ],
+          "astringency": [
+            3.0,
+            5.5
+          ],
+          "aftertaste": [
+            6.0,
+            8.5
+          ]
+        }
+      }
+    }
+  ]
+}
