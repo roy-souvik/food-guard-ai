@@ -181,6 +181,7 @@ def init_db(db_path: str = DB_PATH):
 
             """CREATE TABLE IF NOT EXISTS aroma_analysis (
                 batch_id TEXT PRIMARY KEY,
+                ground_truth TEXT,
                 ammonia REAL,
                 alcohol REAL,
                 voc REAL,
@@ -194,6 +195,7 @@ def init_db(db_path: str = DB_PATH):
 
             """CREATE TABLE IF NOT EXISTS taste_analysis (
                 batch_id TEXT PRIMARY KEY,
+                ground_truth TEXT,
                 sweetness REAL,
                 saltiness REAL,
                 sourness REAL,
@@ -208,6 +210,7 @@ def init_db(db_path: str = DB_PATH):
 
             """CREATE TABLE IF NOT EXISTS vision_analysis (
                 batch_id TEXT PRIMARY KEY,
+                ground_truth TEXT,
                 image_path TEXT,
                 deposit_type TEXT,
                 predicted_class TEXT,
@@ -280,14 +283,15 @@ def insert_aroma_analysis(
     batch_id: str,
     ammonia: float, alcohol: float, voc: float, sulfur: float, hydrocarbon: float,
     predicted_class: str, confidence: float,
+    ground_truth: str = None,
     db_path: str = DB_PATH
 ) -> str:
     """Insert aroma analysis record (uses batch_id as primary key)."""
     query = """INSERT INTO aroma_analysis
-        (batch_id, ammonia, alcohol, voc, sulfur, hydrocarbon, predicted_class, confidence)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)"""
+        (batch_id, ground_truth, ammonia, alcohol, voc, sulfur, hydrocarbon, predicted_class, confidence)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"""
     execute_insert(db_path, query, (
-        batch_id, ammonia, alcohol, voc, sulfur, hydrocarbon, predicted_class, confidence
+        batch_id, ground_truth, ammonia, alcohol, voc, sulfur, hydrocarbon, predicted_class, confidence
     ))
     return batch_id
 
@@ -296,14 +300,15 @@ def insert_taste_analysis(
     sweetness: float, saltiness: float, sourness: float, bitterness: float,
     umami: float, astringency: float,
     predicted_class: str, confidence: float,
+    ground_truth: str = None,
     db_path: str = DB_PATH
 ) -> str:
     """Insert taste analysis record (uses batch_id as primary key)."""
     query = """INSERT INTO taste_analysis
-        (batch_id, sweetness, saltiness, sourness, bitterness, umami, astringency, predicted_class, confidence)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        (batch_id, ground_truth, sweetness, saltiness, sourness, bitterness, umami, astringency, predicted_class, confidence)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
     execute_insert(db_path, query, (
-        batch_id, sweetness, saltiness, sourness, bitterness, umami, astringency, predicted_class, confidence
+        batch_id, ground_truth, sweetness, saltiness, sourness, bitterness, umami, astringency, predicted_class, confidence
     ))
     return batch_id
 
@@ -311,14 +316,15 @@ def insert_vision_analysis(
     batch_id: str,
     image_path: str, deposit_type: str,
     predicted_class: str, confidence: float,
+    ground_truth: str = None,
     db_path: str = DB_PATH
 ) -> str:
     """Insert vision analysis record (uses batch_id as primary key)."""
     query = """INSERT INTO vision_analysis
-        (batch_id, image_path, deposit_type, predicted_class, confidence)
-        VALUES (?, ?, ?, ?, ?)"""
+        (batch_id, ground_truth, image_path, deposit_type, predicted_class, confidence)
+        VALUES (?, ?, ?, ?, ?, ?)"""
     execute_insert(db_path, query, (
-        batch_id, image_path, deposit_type, predicted_class, confidence
+        batch_id, ground_truth, image_path, deposit_type, predicted_class, confidence
     ))
     return batch_id
 
