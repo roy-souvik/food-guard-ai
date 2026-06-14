@@ -316,33 +316,6 @@ def insert_vision_analysis(
     ))
     return vision_id
 
-def insert_investigation(
-    batch_id: str,
-    predicted_class: str, confidence: float,
-    db_path: str = DB_PATH
-) -> str:
-    """Insert investigation record, return ID."""
-    investigation_id = generate_investigation_id()
-    query = """INSERT INTO investigations
-        (id, batch_id, predicted_class, confidence)
-        VALUES (?, ?, ?, ?)"""
-    execute_insert(db_path, query, (investigation_id, batch_id, predicted_class, confidence))
-    return investigation_id
-
-def insert_correlation_rule(
-    rule_name: str, pattern_json: Dict, target_adulterant: str,
-    confidence_boost: float, explanation: str, weight: float,
-    db_path: str = DB_PATH
-) -> int:
-    """Insert correlation rule, return ID."""
-    query = """INSERT INTO correlation_rules
-        (rule_name, pattern_json, target_adulterant, confidence_boost, explanation, weight)
-        VALUES (?, ?, ?, ?, ?, ?)"""
-    rule_id = execute_insert(db_path, query, (
-        rule_name, json.dumps(pattern_json), target_adulterant, confidence_boost, explanation, weight
-    ))
-    return rule_id
-
 def insert_agent_execution(
     investigation_id: str, agent_name: str,
     input_data: Dict, output_data: Dict, reasoning: str = "",
