@@ -188,24 +188,28 @@ def init_db(db_path: str = DB_PATH):
             """CREATE TABLE IF NOT EXISTS aroma_analysis (
                 id TEXT PRIMARY KEY,
                 batch_id TEXT NOT NULL,
-                ammonia REAL, alcohol REAL, voc REAL, sulfur REAL, hydrocarbon REAL,
-                predicted_class TEXT,
-                confidence REAL,
+                ammonia REAL,
+                alcohol REAL,
+                voc REAL,
+                sulfur REAL,
+                hydrocarbon REAL,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP
             )""",
 
             """CREATE TABLE IF NOT EXISTS taste_analysis (
                 id TEXT PRIMARY KEY,
                 batch_id TEXT NOT NULL,
-                sweetness REAL, saltiness REAL, sourness REAL, bitterness REAL,
-                umami REAL, astringency REAL,
-                predicted_class TEXT,
-                confidence REAL,
+                sweetness REAL,
+                saltiness REAL,
+                sourness REAL,
+                bitterness REAL,
+                umami REAL,
+                astringency REAL,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP
             )""",
 
-            """CREATE TABLE vision_nalysis  (
-                data_sample_id VARCHAR(36) PRIMARY KEY,
+            """CREATE TABLE vision_nalysis (
+                data_batch_id VARCHAR(36) PRIMARY KEY,
                 image_filename VARCHAR(255) NOT NULL,
 
                 -- The single string column holding the entire packed JSON payload
