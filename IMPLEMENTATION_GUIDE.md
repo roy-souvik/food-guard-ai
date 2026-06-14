@@ -63,7 +63,7 @@ jupyter notebook
 ### Step 1: Clone/Navigate to Project
 
 ```bash
-cd /home/souvik/projects/AI/food-guard-ai
+cd /food-guard-ai
 ```
 
 ### Step 2: Create Virtual Environment (Optional but Recommended)
@@ -357,7 +357,7 @@ Open in browser: http://localhost:7860
 ### Post-Installation (Before Running Notebooks)
 
 ```
-/home/souvik/projects/AI/food-guard-ai/
+//food-guard-ai/
 ├── TECHNICAL_PLAN.md           ← Detailed architecture docs
 ├── IMPLEMENTATION_GUIDE.md      ← This file
 ├── README.md                    ← Project overview
