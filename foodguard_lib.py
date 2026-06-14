@@ -37,6 +37,19 @@ INPUT_VAL_FOLDER = "/workspace/shared/food-guard-ai/data/milk_evaporative_datase
 JSON_OUTPUT_FOLDER = "output/yolo_predictions"
 YALM_CONFIG_PATH = r"/workspace/shared/food-guard-ai/notebooks/dataset.yaml"
 
+# ============= Centralized Path Constants =============
+
+ROOT_PATH = "/food-guard-ai"
+CRM_PATH = f"{ROOT_PATH}/data/certified_reference_materials(crm).json"
+PROMPT_PATH = f"{ROOT_PATH}/data/foodguard_crm_agent_prompt.py"
+OUTPUT_DIR = f"{ROOT_PATH}/output"
+ENRICHED_SAMPLES_PATH = f"{OUTPUT_DIR}/enriched_samples.json"
+BATCH_RISK_SUMMARY_PATH = f"{OUTPUT_DIR}/batch_risk_summary.json"
+FOOD_SAFETY_REPORT_JSON = f"{OUTPUT_DIR}/food_safety_report.json"
+FOOD_SAFETY_REPORT_MD = f"{OUTPUT_DIR}/food_safety_report.md"
+SHAP_GLOBAL_IMPORTANCE_PATH = f"{ROOT_PATH}/ml/shap_global_importance.png"
+BASE_PATH = Path(ROOT_PATH)
+
 # ============= DB Helpers =============
 
 @contextmanager
