@@ -185,27 +185,6 @@ def init_db(db_path: str = DB_PATH):
         cursor = conn.cursor()
 
         statements = [
-            """CREATE TABLE IF NOT EXISTS investigations (
-                id TEXT PRIMARY KEY,
-                batch_id TEXT NOT NULL,
-                predicted_class TEXT,
-                confidence REAL,
-                risk_level TEXT,
-                reasoning TEXT,
-                model_version TEXT,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-            )""",
-
-            """CREATE TABLE IF NOT EXISTS evidence (
-                id TEXT PRIMARY KEY,
-                investigation_id TEXT NOT NULL,
-                evidence_type TEXT,
-                raw_data TEXT,
-                prediction TEXT,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (investigation_id) REFERENCES investigations(id)
-            )""",
-
             """CREATE TABLE IF NOT EXISTS aroma_analysis (
                 id TEXT PRIMARY KEY,
                 batch_id TEXT NOT NULL,
@@ -236,28 +215,6 @@ def init_db(db_path: str = DB_PATH):
                 total_objects INT NOT NULL DEFAULT 0,
                 unique_classes TEXT NOT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )""",
-
-            """CREATE TABLE IF NOT EXISTS correlation_rules (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                rule_name TEXT,
-                pattern_json TEXT,
-                target_adulterant TEXT,
-                confidence_boost REAL,
-                explanation TEXT,
-                weight REAL,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-            )""",
-
-            """CREATE TABLE IF NOT EXISTS correlations (
-                id TEXT PRIMARY KEY,
-                investigation_id TEXT NOT NULL,
-                matched_rule_ids TEXT,
-                candidate_adulterants TEXT,
-                final_adulterant TEXT,
-                final_confidence REAL,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (investigation_id) REFERENCES investigations(id)
             )""",
 
             """CREATE TABLE IF NOT EXISTS agent_execution (
