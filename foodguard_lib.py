@@ -173,6 +173,15 @@ def init_db(db_path: str = DB_PATH):
         cursor = conn.cursor()
 
         statements = [
+            """CREATE TABLE IF NOT EXISTS investigations (
+                id TEXT PRIMARY KEY,
+                batch_id TEXT,
+                status TEXT DEFAULT 'in_progress',
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                completed_at DATETIME,
+                FOREIGN KEY (batch_id) REFERENCES batches(id)
+            )""",
+
             """CREATE TABLE IF NOT EXISTS batches (
                 id TEXT PRIMARY KEY,
                 adulterant TEXT,
@@ -268,6 +277,17 @@ def init_db(db_path: str = DB_PATH):
         print(f"[DB] Schema initialized: {db_path}")
 
 # ============= Data Insertion Helpers =============
+
+def insert_investigation(
+    batch_id: str = None,
+    status: str = "in_progress",
+    db_path: str = DB_PATH
+) -> str:
+    """Insert investigation record and return investigation ID."""
+    investigation_id = generate_investigation_id()
+    query = """INSERT INTO investigations (id, batch_id, status) VALUES (?, ?, ?)"""
+    execute_insert(db_path, query, (investigation_id, batch_id, status))
+    return investigation_id
 
 def insert_batch(
     adulterant: str = None,
