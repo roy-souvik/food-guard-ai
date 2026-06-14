@@ -85,18 +85,6 @@ def generate_investigation_id() -> str:
     """Generate investigation ID."""
     return generate_id("INV")
 
-def generate_aroma_id() -> str:
-    """Generate aroma analysis ID."""
-    return generate_id("ARO")
-
-def generate_taste_id() -> str:
-    """Generate taste analysis ID."""
-    return generate_id("TAS")
-
-def generate_vision_id() -> str:
-    """Generate vision analysis ID."""
-    return generate_id("VIS")
-
 def generate_correlation_id() -> str:
     """Generate correlation ID."""
     return generate_id("CORR")
@@ -185,40 +173,47 @@ def init_db(db_path: str = DB_PATH):
         cursor = conn.cursor()
 
         statements = [
-            """CREATE TABLE IF NOT EXISTS aroma_analysis (
+            """CREATE TABLE IF NOT EXISTS batches (
                 id TEXT PRIMARY KEY,
-                batch_id TEXT NOT NULL,
+                adulterant TEXT,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )""",
+
+            """CREATE TABLE IF NOT EXISTS aroma_analysis (
+                batch_id TEXT PRIMARY KEY,
                 ammonia REAL,
                 alcohol REAL,
                 voc REAL,
                 sulfur REAL,
                 hydrocarbon REAL,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                predicted_class TEXT,
+                confidence REAL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (batch_id) REFERENCES batches(id)
             )""",
 
             """CREATE TABLE IF NOT EXISTS taste_analysis (
-                id TEXT PRIMARY KEY,
-                batch_id TEXT NOT NULL,
+                batch_id TEXT PRIMARY KEY,
                 sweetness REAL,
                 saltiness REAL,
                 sourness REAL,
                 bitterness REAL,
                 umami REAL,
                 astringency REAL,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                predicted_class TEXT,
+                confidence REAL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (batch_id) REFERENCES batches(id)
             )""",
 
-            """CREATE TABLE vision_nalysis (
-                data_batch_id VARCHAR(36) PRIMARY KEY,
-                image_filename VARCHAR(255) NOT NULL,
-
-                -- The single string column holding the entire packed JSON payload
-                class_counts_json TEXT NOT NULL,
-
-                -- Summary Metrics
-                total_objects INT NOT NULL DEFAULT 0,
-                unique_classes TEXT NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            """CREATE TABLE IF NOT EXISTS vision_analysis (
+                batch_id TEXT PRIMARY KEY,
+                image_path TEXT,
+                deposit_type TEXT,
+                predicted_class TEXT,
+                confidence REAL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (batch_id) REFERENCES batches(id)
             )""",
 
             """CREATE TABLE IF NOT EXISTS agent_execution (
@@ -271,21 +266,30 @@ def init_db(db_path: str = DB_PATH):
 
 # ============= Data Insertion Helpers =============
 
+def insert_batch(
+    adulterant: str = None,
+    db_path: str = DB_PATH
+) -> str:
+    """Insert batch record and return batch ID."""
+    batch_id = generate_batch_id()
+    query = """INSERT INTO batches (id, adulterant) VALUES (?, ?)"""
+    execute_insert(db_path, query, (batch_id, adulterant))
+    return batch_id
+
 def insert_aroma_analysis(
     batch_id: str,
     ammonia: float, alcohol: float, voc: float, sulfur: float, hydrocarbon: float,
     predicted_class: str, confidence: float,
     db_path: str = DB_PATH
 ) -> str:
-    """Insert aroma analysis record, return ID."""
-    aroma_id = generate_aroma_id()
+    """Insert aroma analysis record (uses batch_id as primary key)."""
     query = """INSERT INTO aroma_analysis
-        (id, batch_id, ammonia, alcohol, voc, sulfur, hydrocarbon, predicted_class, confidence)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        (batch_id, ammonia, alcohol, voc, sulfur, hydrocarbon, predicted_class, confidence)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)"""
     execute_insert(db_path, query, (
-        aroma_id, batch_id, ammonia, alcohol, voc, sulfur, hydrocarbon, predicted_class, confidence
+        batch_id, ammonia, alcohol, voc, sulfur, hydrocarbon, predicted_class, confidence
     ))
-    return aroma_id
+    return batch_id
 
 def insert_taste_analysis(
     batch_id: str,
@@ -294,15 +298,14 @@ def insert_taste_analysis(
     predicted_class: str, confidence: float,
     db_path: str = DB_PATH
 ) -> str:
-    """Insert taste analysis record, return ID."""
-    taste_id = generate_taste_id()
+    """Insert taste analysis record (uses batch_id as primary key)."""
     query = """INSERT INTO taste_analysis
-        (id, batch_id, sweetness, saltiness, sourness, bitterness, umami, astringency, predicted_class, confidence)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        (batch_id, sweetness, saltiness, sourness, bitterness, umami, astringency, predicted_class, confidence)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"""
     execute_insert(db_path, query, (
-        taste_id, batch_id, sweetness, saltiness, sourness, bitterness, umami, astringency, predicted_class, confidence
+        batch_id, sweetness, saltiness, sourness, bitterness, umami, astringency, predicted_class, confidence
     ))
-    return taste_id
+    return batch_id
 
 def insert_vision_analysis(
     batch_id: str,
@@ -310,15 +313,14 @@ def insert_vision_analysis(
     predicted_class: str, confidence: float,
     db_path: str = DB_PATH
 ) -> str:
-    """Insert vision analysis record, return ID."""
-    vision_id = generate_vision_id()
+    """Insert vision analysis record (uses batch_id as primary key)."""
     query = """INSERT INTO vision_analysis
-        (id, batch_id, image_path, deposit_type, predicted_class, confidence)
-        VALUES (?, ?, ?, ?, ?, ?)"""
+        (batch_id, image_path, deposit_type, predicted_class, confidence)
+        VALUES (?, ?, ?, ?, ?)"""
     execute_insert(db_path, query, (
-        vision_id, batch_id, image_path, deposit_type, predicted_class, confidence
+        batch_id, image_path, deposit_type, predicted_class, confidence
     ))
-    return vision_id
+    return batch_id
 
 def insert_agent_execution(
     investigation_id: str, agent_name: str,
