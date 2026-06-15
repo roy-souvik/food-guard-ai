@@ -470,7 +470,7 @@ def generate_report_markdown(
 
 # ============= Utility Helpers =============
 
-def generate_vision_images(n_samples_per_class=60, output_dir="../data/synthetic/vision"):
+def generate_vision_images(n_samples_per_class=20, output_dir="../data/synthetic/vision"):
     """
     Generate procedural deposit pattern images for each adulterant.
     Returns list of (image_path, deposit_type, adulterant) tuples.
