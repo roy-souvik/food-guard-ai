@@ -13,6 +13,7 @@ pandas>=2.0
 numpy>=1.26
 opencv-python-headless>=4.8.0
 ultralytics>=8.0.0
+qrcode[pil]>=7.4
 
 # ROCM PyTorch packages (install with: pip install -r requirements-rocm.txt --index-url https://download.pytorch.org/whl/rocm6.4)
 torch>=2.0
