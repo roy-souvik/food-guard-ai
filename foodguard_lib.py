@@ -21,6 +21,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
+import pandas as pd
 import qrcode
 import requests
 import torch
@@ -51,7 +52,6 @@ INPUT_VAL_FOLDER = f"{ROOT_PATH}/data/val/"
 OUTPUT_DIR = f"{ROOT_PATH}/output"
 JSON_OUTPUT_FOLDER = f"{OUTPUT_DIR}/data/yolo_predictions"
 
-ADULTERANTS = ["Fresh", "Water", "Urea", "Detergent", "Formalin", "H2O2", "Spoiled"]
 ADULTERANTS = [
     "Fresh",
     "Water",
@@ -81,6 +81,20 @@ BASE_PATH = Path(ROOT_PATH)
 BASE_URL_MODEL = "http://localhost:8000/v1"
 OPENAI_API_KEY = "abc-123"
 LLM = "Qwen3-4B"
+
+# ============= Batch Data =============
+SOURCES = [
+    "Daily Cooperative Center",
+    "Village Milk Collection Unit",
+    "Automated Milk Testing Lab",
+    "Organic Farm Network"
+]
+
+DESCRIPTIONS = [
+    "High quality A2 milk verified for purity",
+    "Adulteration passed with no contamination",
+    "Antibiotic milk confirmed by lab test"
+]
 
 # ============= DB Helpers =============
 
@@ -262,10 +276,6 @@ def init_db(db_path: str = DB_PATH):
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (batch_id) REFERENCES batches(id)
             )""",
-            # ----------------------------------------------------------------
-            # CHANGE: Updated table definition to strictly match the requested
-            # sample_id primary key and unified text data column mappings.
-            # ----------------------------------------------------------------
             """CREATE TABLE IF NOT EXISTS vision_analysis (
                 sample_id TEXT PRIMARY KEY,
                 batch_id TEXT,
@@ -335,13 +345,31 @@ def insert_investigation(
     return investigation_id
 
 def insert_batch(
-    adulterant: str = None,
+    source: str = None,
+    description: str = None,
     db_path: str = DB_PATH
 ) -> str:
     batch_id = generate_batch_id()
-    query = """INSERT INTO batches (id, adulterant) VALUES (?, ?)"""
-    execute_insert(db_path, query, (batch_id, adulterant))
+    query = """INSERT INTO batches (id, source, description) VALUES (?, ?, ?)"""
+    execute_insert(db_path, query, (batch_id, source, description))
     return batch_id
+
+def populate_initial_batches(db_path: str = DB_PATH) -> List[str]:
+    """
+    Populate batches table with initial SOURCES and DESCRIPTIONS.
+    Creates combinations of sources and descriptions.
+    Returns list of created batch IDs.
+    """
+    batch_ids = []
+
+    # Create combinations of sources and descriptions
+    for source in SOURCES:
+        for description in DESCRIPTIONS:
+            batch_id = insert_batch(source=source, description=description, db_path=db_path)
+            batch_ids.append(batch_id)
+
+    print(f"[DB] Created {len(batch_ids)} initial batches")
+    return batch_ids
 
 def insert_aroma_analysis(
     batch_id: str,
@@ -373,6 +401,164 @@ def insert_taste_analysis(
         batch_id, ground_truth, sweetness, saltiness, sourness, bitterness, umami, astringency, predicted_class, confidence
     ))
     return batch_id
+
+
+# ===========================================================================
+# Generate Data for e-nose and e-tougue
+# ===========================================================================
+def generate_enose_data(n_samples_per_class=200):
+    """
+    Generate E-Nose synthetic data.
+    Returns DataFrame with columns: adulterant, ammonia, alcohol, voc, sulfur, hydrocarbon
+    """
+
+    # Sensor ranges and shifts per adulterant (from literature)
+    enose_profiles = {
+        "Fresh": {
+            "ammonia": (0.1, 0.5),
+            "alcohol": (0.2, 0.8),
+            "voc": (0.3, 0.9),
+            "sulfur": (0.05, 0.3),
+            "hydrocarbon": (0.1, 0.6)
+        },
+        "Water": {  # Diluted signals
+            "ammonia": (0.05, 0.25),
+            "alcohol": (0.1, 0.4),
+            "voc": (0.1, 0.5),
+            "sulfur": (0.02, 0.15),
+            "hydrocarbon": (0.05, 0.3)
+        },
+        "Urea": {  # High ammonia
+            "ammonia": (1.5, 3.0),
+            "alcohol": (0.2, 0.8),
+            "voc": (0.3, 0.9),
+            "sulfur": (0.1, 0.5),
+            "hydrocarbon": (0.1, 0.6)
+        },
+        "Detergent": {  # Variable profile, some alcohol
+            "ammonia": (0.2, 0.6),
+            "alcohol": (0.5, 1.5),
+            "voc": (0.8, 2.0),
+            "sulfur": (0.2, 0.8),
+            "hydrocarbon": (0.2, 1.0)
+        },
+        "Formalin": {  # Pungent signals
+            "ammonia": (0.5, 1.5),
+            "alcohol": (1.5, 3.5),
+            "voc": (2.0, 4.5),
+            "sulfur": (0.5, 1.5),
+            "hydrocarbon": (0.3, 1.0)
+        },
+        "H2O2": {  # Oxidative markers
+            "ammonia": (0.1, 0.4),
+            "alcohol": (0.3, 1.0),
+            "voc": (0.5, 1.5),
+            "sulfur": (0.05, 0.25),
+            "hydrocarbon": (0.05, 0.3)
+        },
+        "Spoiled": {  # Acidic fermentation markers
+            "ammonia": (0.3, 1.0),
+            "alcohol": (0.5, 2.0),
+            "voc": (0.8, 2.5),
+            "sulfur": (0.3, 1.0),
+            "hydrocarbon": (0.1, 0.8)
+        }
+    }
+
+    data = []
+    for adulterant in enose_profiles.keys():
+        profile = enose_profiles[adulterant]
+        for _ in range(n_samples_per_class):
+            sample = {"adulterant": adulterant}
+            for sensor, (min_val, max_val) in profile.items():
+                # Add Gaussian noise around the range
+                base = np.random.uniform(min_val, max_val)
+                noise = np.random.normal(0, 0.1 * (max_val - min_val))
+                sample[sensor] = max(0, base + noise)
+            data.append(sample)
+
+    return pd.DataFrame(data)
+
+
+def generate_etongue_data(n_samples_per_class=200):
+    """
+    Generate E-Tongue synthetic data.
+    Returns DataFrame with columns: adulterant, sweetness, saltiness, sourness, bitterness, umami, astringency
+    """
+
+    etongue_profiles = {
+        "Fresh": {
+            "sweetness": (4.0, 6.0),
+            "saltiness": (1.0, 2.5),
+            "sourness": (0.5, 1.5),
+            "bitterness": (0.1, 0.5),
+            "umami": (0.5, 1.5),
+            "astringency": (0.2, 0.8)
+        },
+        "Water": {  # Diluted taste
+            "sweetness": (2.0, 3.5),
+            "saltiness": (0.3, 1.0),
+            "sourness": (0.2, 0.8),
+            "bitterness": (0.05, 0.2),
+            "umami": (0.1, 0.5),
+            "astringency": (0.05, 0.3)
+        },
+        "Urea": {  # High bitterness
+            "sweetness": (2.0, 4.0),
+            "saltiness": (1.5, 3.0),
+            "sourness": (0.5, 1.5),
+            "bitterness": (2.0, 4.0),  # ** MARKER
+            "umami": (0.2, 1.0),
+            "astringency": (1.0, 2.0)  # ** MARKER
+        },
+        "Detergent": {  # Harsh, bitter, soapy
+            "sweetness": (0.5, 1.5),
+            "saltiness": (2.0, 3.5),
+            "sourness": (0.3, 1.0),
+            "bitterness": (2.5, 4.5),  # ** MARKER
+            "umami": (0.1, 0.5),
+            "astringency": (2.0, 3.5)  # ** MARKER
+        },
+        "Formalin": {  # Pungent, sour, harsh
+            "sweetness": (0.2, 1.0),
+            "saltiness": (1.0, 2.5),
+            "sourness": (3.0, 5.0),  # ** MARKER
+            "bitterness": (1.5, 3.0),
+            "umami": (0.1, 0.5),
+            "astringency": (3.0, 4.5)  # ** MARKER
+        },
+        "H2O2": {  # Clean, faint
+            "sweetness": (3.0, 5.0),
+            "saltiness": (0.2, 1.0),
+            "sourness": (0.1, 0.5),
+            "bitterness": (0.05, 0.3),
+            "umami": (0.1, 0.5),
+            "astringency": (0.1, 0.5)
+        },
+        "Spoiled": {  # Sour, acidic
+            "sweetness": (1.0, 2.5),
+            "saltiness": (1.5, 2.5),
+            "sourness": (3.5, 5.5),  # ** MARKER
+            "bitterness": (0.5, 1.5),
+            "umami": (0.1, 0.5),
+            "astringency": (1.5, 3.0)  # ** MARKER
+        }
+    }
+
+    data = []
+    for adulterant in etongue_profiles.keys():
+        profile = etongue_profiles[adulterant]
+        for _ in range(n_samples_per_class):
+            sample = {"adulterant": adulterant}
+            for sensor, (min_val, max_val) in profile.items():
+                base = np.random.uniform(min_val, max_val)
+                noise = np.random.normal(0, 0.15 * (max_val - min_val))
+                sample[sensor] = max(0, base + noise)
+            data.append(sample)
+
+    return pd.DataFrame(data)
+
+
 
 # ----------------------------------------------------------------------------
 # CHANGE: Completely refactored this function parameters and query signature
