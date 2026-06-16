@@ -19,3 +19,4 @@ torch>=2.0
 torchvision>=0.15.0
 torchaudio>=2.0
 grandalf>=0.8
+transformers
