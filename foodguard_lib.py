@@ -108,11 +108,32 @@ def generate_passport_id() -> str:
 # ============= LLM Helpers =============
 
 def get_ollama_client(base_url: str = "http://localhost:11434"):
-    """Return Ollama client."""
+    """
+    DEPRECATED: Use agents.llm_client.get_llm_client() instead.
+
+    This function is kept for backward compatibility but should not be used
+    in new code. The food guard agents now use vLLM server with Qwen3-4B
+    via the OpenAI-compatible API.
+
+    For new code, use:
+        from agents.llm_client import get_llm_client, configure_llm_env
+        configure_llm_env()
+        llm = get_llm_client()
+
+    See LLM_SETUP_GUIDE.md for details.
+    """
     return OllamaClient(base_url=base_url)
 
 class OllamaClient:
-    """Wrapper for Ollama API calls."""
+    """
+    DEPRECATED: Wrapper for Ollama API calls.
+
+    This class is kept for backward compatibility. New code should use:
+        from agents.llm_client import get_llm_client, configure_llm_env
+
+    The food guard agents now use vLLM server with Qwen3-4B via OpenAI API.
+    See LLM_SETUP_GUIDE.md for migration details.
+    """
 
     def __init__(self, base_url: str = "http://localhost:11434"):
         self.base_url = base_url
