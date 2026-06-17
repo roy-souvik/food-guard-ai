@@ -36,6 +36,7 @@ warnings.filterwarnings("ignore", category=UserWarning, module="torch")
 # ============= Constants =============
 
 DB_PATH = "foodguard.db"
+DEMO_DB_PATH="foodguarddemo.db"
 
 # ============================================================================
 # CENTRALIZED PATH & FRAMEWORK CONSTANTS
@@ -372,6 +373,7 @@ def populate_initial_batches(db_path: str = DB_PATH) -> List[str]:
     return batch_ids
 
 def insert_aroma_analysis(
+    sample_id: str,
     batch_id: str,
     ammonia: float, alcohol: float, voc: float, sulfur: float, hydrocarbon: float,
     predicted_class: str, confidence: float,
@@ -381,12 +383,14 @@ def insert_aroma_analysis(
     query = """INSERT INTO aroma_analysis
         (sample_id, batch_id, ground_truth, ammonia, alcohol, voc, sulfur, hydrocarbon, predicted_class, confidence)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+
     execute_insert(db_path, query, (
-        batch_id, ground_truth, ammonia, alcohol, voc, sulfur, hydrocarbon, predicted_class, confidence
+        sample_id, batch_id, ground_truth, ammonia, alcohol, voc, sulfur, hydrocarbon, predicted_class, confidence
     ))
     return batch_id
 
 def insert_taste_analysis(
+    sample_id: str,
     batch_id: str,
     sweetness: float, saltiness: float, sourness: float, bitterness: float,
     umami: float, astringency: float,
@@ -398,7 +402,7 @@ def insert_taste_analysis(
         (sample_id, batch_id, ground_truth, sweetness, saltiness, sourness, bitterness, umami, astringency, predicted_class, confidence)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
     execute_insert(db_path, query, (
-        batch_id, ground_truth, sweetness, saltiness, sourness, bitterness, umami, astringency, predicted_class, confidence
+        sample_id, batch_id, ground_truth, sweetness, saltiness, sourness, bitterness, umami, astringency, predicted_class, confidence
     ))
     return batch_id
 
@@ -634,6 +638,20 @@ def update_investigation(investigation_id: str, updates: Dict, db_path: str = DB
     query = f"UPDATE investigations SET {set_clauses} WHERE id = ?"
     params = tuple(updates.values()) + (investigation_id,)
     execute_insert(db_path, query, params)
+
+def get_latest_batch_id(db_path: str = DB_PATH) -> Optional[str]:
+    """
+    Retrieves the most recently created or updated batch identifier from the batches table.
+    Returns None if the table is empty.
+    """
+    # FIX: Changed 'batch_id' to 'id' (or 'id AS batch_id') to match your schema column
+    query = "SELECT id AS batch_id FROM batches ORDER BY created_at DESC LIMIT 1"
+    rows = execute_query(db_path, query)
+
+    if rows:
+        # Extracts the raw ID string from the first matching row safely
+        return rows[0]["batch_id"] if isinstance(rows[0], dict) else rows[0][0]
+    return None
 
 # ============= Report Generation =============
 
@@ -988,7 +1006,8 @@ def train_yolo_detector(
 class MilkVisionPredictor:
     """
     Unified inference pipeline combining YOLO Classification and Object Detection.
-    Provides execution flags to dynamically control database entries and JSON logging.
+    Features independent data mapping for flexible JSON logging and strict
+    SQLite schema column synchronization.
     """
     def __init__(
         self,
@@ -997,15 +1016,15 @@ class MilkVisionPredictor:
         db_path: str = DB_PATH
     ) -> None:
         """
-        Initialize the predictor tracking engines and targeted database parameters.
-        Defaults to centralized system constants if arguments are omitted.
+        Initialize engines and match internal database destination configurations.
         """
-        resolved_cls_path = cls_model_path if cls_model_path else YOLO_CLS_WEIGHTS
-        resolved_det_path = det_model_path if det_model_path else YOLO_DET_WEIGHTS
-
-        self.cls_model = YOLO(resolved_cls_path) if resolved_cls_path and Path(resolved_cls_path).exists() else None
-        self.det_model = YOLO(resolved_det_path) if resolved_det_path and Path(resolved_det_path).exists() else None
         self.db_path = db_path
+        self.cls_model_path = cls_model_path if cls_model_path else YOLO_CLS_WEIGHTS
+        self.det_model_path = det_model_path if det_model_path else YOLO_DET_WEIGHTS
+
+        # Initialize YOLO models dynamically if weights are deployed
+        self.cls_model = YOLO(self.cls_model_path) if Path(self.cls_model_path).exists() else None
+        self.det_model = YOLO(self.det_model_path) if Path(self.det_model_path).exists() else None
 
     def predict(
         self,
@@ -1015,20 +1034,27 @@ class MilkVisionPredictor:
         save_json: bool = False
     ) -> Dict[str, Any]:
         """
-        Execute combined multi-model inference on a target image file path.
+        Execute parallel classification and object detection over a target frame image.
+
+        Decoupled Rules:
+          - sample_id is extracted purely from the image file name base stem.
+          - batch_id is pulled dynamically from the active database tracking row.
         """
         test_img_path = Path(image_path)
         if not test_img_path.exists():
-            raise FileNotFoundError(f"[Error] Target image file not found at: {test_img_path}")
+            raise FileNotFoundError(f"Target vision asset does not exist at: {test_img_path}")
 
-        try:
-            data_sample_id, batch_id = test_img_path.stem.split('_')
-        except ValueError:
-            data_sample_id = test_img_path.stem
+        # 1. Standardize Sample Identity from the physical image file metadata
+        data_sample_id = test_img_path.stem
+
+        # 2. Extract context-dependent Batch Identifiers directly from the DB helper
+        batch_id = get_latest_batch_id(self.db_path)
+        if not batch_id:
             batch_id = "UNKNOWN_BATCH"
 
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+        # Core payload initialization matching the desired Python API structural schema
         combined_payload = {
             "data_sample_id": data_sample_id,
             "batch_id": batch_id,
@@ -1039,11 +1065,10 @@ class MilkVisionPredictor:
         }
 
         # --------------------------------------------------------------------
-        # Modality 1: Image Classification
+        # Modality 1: Image Classification Execution
         # --------------------------------------------------------------------
         if self.cls_model:
             cls_result = self.cls_model(str(test_img_path), verbose=False)[0]
-
             if cls_result.probs is not None:
                 raw_probs = cls_result.probs.data.cpu().numpy()
                 class_names = cls_result.names
@@ -1053,33 +1078,30 @@ class MilkVisionPredictor:
 
                 for idx, confidence in enumerate(raw_probs):
                     c_name = class_names[idx]
-                    percentage = round(float(confidence) * 100, 2)
-                    all_class_scores[c_name] = f"{percentage}%"
-                    if percentage > 5.0:
+                    percentage_str = f"{round(float(confidence) * 100, 2)}%"
+                    all_class_scores[c_name] = percentage_str
+
+                    # Track mixture components passing confidence criteria
+                    if float(confidence) > 0.05:
                         detected_classes.append(c_name)
 
                 top_conf = round(float(cls_result.probs.top1conf.item()), 4)
-                top_class = cls_result.names[cls_result.probs.top1]
+                top_class = class_names[cls_result.probs.top1]
 
-                cls_payload = {
+                combined_payload["classification_analysis"] = {
                     "predicted_class": top_class,
                     "confidence": top_conf,
                     "class_scores": all_class_scores,
                     "detected_mixture_components": detected_classes
                 }
-                combined_payload["classification_analysis"] = cls_payload
-            else:
-                print("[Warning] Classification model returned no probabilities. Check if a detection model was loaded by mistake.")
 
         # --------------------------------------------------------------------
-        # Modality 2: Object Detection
+        # Modality 2: Object Detection Execution
         # --------------------------------------------------------------------
         if self.det_model:
             det_result = self.det_model(str(test_img_path), verbose=False)[0]
-
             if det_result.boxes is not None:
                 boxes = det_result.boxes
-
                 detected_objects = []
                 object_counts = {}
 
@@ -1087,8 +1109,6 @@ class MilkVisionPredictor:
                     cls_idx = int(box.cls.item())
                     obj_name = det_result.names[cls_idx]
                     box_conf = round(float(box.conf.item()), 4)
-
-                    # FIX: Kept explicit [0] index map array slicing resolution intact
                     xyxy_coords = box.xyxy[0].cpu().numpy().tolist()
 
                     detected_objects.append({
@@ -1096,59 +1116,58 @@ class MilkVisionPredictor:
                         "confidence": box_conf,
                         "bounding_box_xyxy": [round(coord, 2) for coord in xyxy_coords]
                     })
-
                     object_counts[obj_name] = object_counts.get(obj_name, 0) + 1
 
-                det_payload = {
+                combined_payload["object_detection_analysis"] = {
                     "total_objects_detected": len(detected_objects),
                     "object_class_counts": object_counts,
                     "detailed_instances": detected_objects
                 }
-                combined_payload["object_detection_analysis"] = det_payload
-            else:
-                print("[Warning] Detection model returned no boxes. Check if a classification model was loaded by mistake.")
 
         # --------------------------------------------------------------------
-        # CHANGE: Unified Database Persistence Logic
-        # Gathers parameters from both prediction branches and transforms elements
-        # into serialized strings to safely fit the new text column mappings.
-        # --------------------------------------------------------------------
-        if save_db:
-            try:
-                cls_info = combined_payload.get("classification_analysis") or {}
-                det_info = combined_payload.get("object_detection_analysis") or {}
-
-                deposit_type_val = json.dumps(cls_info.get("detected_mixture_components", [])) if cls_info else "[]"
-                pred_class_val = cls_info.get("predicted_class", "Unknown") if cls_info else "Unknown"
-                conf_val = str(cls_info.get("confidence", "0.0")) if cls_info else "0.0"
-                det_info_str = json.dumps(det_info) if det_info else "{}"
-
-                insert_vision_analysis(
-                    sample_id=data_sample_id,
-                    batch_id=batch_id,
-                    image_path=str(test_img_path.resolve()),
-                    deposit_type=deposit_type_val,
-                    predicted_class=pred_class_val,
-                    confidence=conf_val,
-                    object_detection_info=det_info_str,
-                    db_path=self.db_path
-                )
-            except Exception as e:
-                print(f"[Warning] Database insertion fault on combined mapping step: {e}")
-
-        # --------------------------------------------------------------------
-        # Data Persistence: Serialization Out
+        # Execution Mode 1: File Exporter (JSON Generation)
         # --------------------------------------------------------------------
         if save_json:
             out_path = Path(output_dir)
             out_path.mkdir(parents=True, exist_ok=True)
+            json_file_path = out_path / f"{data_sample_id}_vision.json"
+            with open(json_file_path, "w") as j_file:
+                json.dump(combined_payload, j_file, indent=4)
 
-            json_target_path = out_path / f"{data_sample_id}_{batch_id}_combined.json"
-            with open(json_target_path, "w", encoding="utf-8") as json_file:
-                json.dump(combined_payload, json_file, indent=4)
+        # --------------------------------------------------------------------
+        # Execution Mode 2: RDBMS Direct Injection (Strict Column Layout Mappings)
+        # --------------------------------------------------------------------
+        if save_db:
+            cls_info = combined_payload.get("classification_analysis") or {}
+            det_info = combined_payload.get("object_detection_analysis") or {}
+
+            # Extract standard data table structures
+            deposit_type_val = json.dumps(cls_info.get("detected_mixture_components", []))
+            pred_class_val = cls_info.get("predicted_class", "Unknown")
+            conf_val = str(cls_info.get("confidence", "0.0"))
+
+            # Build and enrich the object detection info dictionary map package
+            enriched_detection_data = {
+                "total_objects_detected": det_info.get("total_objects_detected", 0),
+                "object_class_counts": det_info.get("object_class_counts", {}),
+                "detailed_instances": det_info.get("detailed_instances", []),
+                "classification_class_scores": cls_info.get("class_scores", {})  # Embedded injection
+            }
+            det_info_str = json.dumps(enriched_detection_data)
+
+            # Execute database driver mapping parameters straight to the destination schema columns
+            insert_vision_analysis(
+                sample_id=data_sample_id,
+                batch_id=batch_id,
+                image_path=str(test_img_path.resolve()),
+                deposit_type=deposit_type_val,
+                predicted_class=pred_class_val,
+                confidence=conf_val,
+                object_detection_info=det_info_str,  # Maps cleanly to schema columns
+                db_path=self.db_path
+            )
 
         return combined_payload
-
 if __name__ == "__main__":
     # Test: initialize DB
     init_db()
