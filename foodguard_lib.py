@@ -1168,6 +1168,8 @@ class MilkVisionPredictor:
             )
 
         return combined_payload
+
+
 if __name__ == "__main__":
     # Test: initialize DB
     init_db()
