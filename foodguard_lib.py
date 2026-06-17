@@ -379,8 +379,8 @@ def insert_aroma_analysis(
     db_path: str = DB_PATH
 ) -> str:
     query = """INSERT INTO aroma_analysis
-        (batch_id, ground_truth, ammonia, alcohol, voc, sulfur, hydrocarbon, predicted_class, confidence)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        (sample_id, batch_id, ground_truth, ammonia, alcohol, voc, sulfur, hydrocarbon, predicted_class, confidence)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
     execute_insert(db_path, query, (
         batch_id, ground_truth, ammonia, alcohol, voc, sulfur, hydrocarbon, predicted_class, confidence
     ))
@@ -395,8 +395,8 @@ def insert_taste_analysis(
     db_path: str = DB_PATH
 ) -> str:
     query = """INSERT INTO taste_analysis
-        (batch_id, ground_truth, sweetness, saltiness, sourness, bitterness, umami, astringency, predicted_class, confidence)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
+        (sample_id, batch_id, ground_truth, sweetness, saltiness, sourness, bitterness, umami, astringency, predicted_class, confidence)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
     execute_insert(db_path, query, (
         batch_id, ground_truth, sweetness, saltiness, sourness, bitterness, umami, astringency, predicted_class, confidence
     ))
